@@ -13,9 +13,5 @@ urlpatterns = [
     # path('adminhome/', views.adminHomeView)  
     
 ]
-
-
-
-
-
+print("SDGGSDg")
 teh = []
