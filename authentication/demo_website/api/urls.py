@@ -3,15 +3,14 @@ from . import views
 
 
 urlpatterns = [
-    path('login/', views.loginView, name='login'),
-    path('register/', views.registerView, name = 'register'),
-    path('home/', views.homeView, name = 'home'),
-    
-    
-    # path('adminreg/', views.admin_regView),
-    # path('adminlogin/' , views.admin_logView),
-    # path('adminhome/', views.adminHomeView)  
-    
+    path('login/', views.loginView, name='logins'),
+    path('registers/', views.registerView, name = 'register'),
+    path('dashboard/', views.dashboard, name = 'dashboard'),
+    path('logout/' ,  views.logout_view, name = 'logout'),
+
+    path('admin_panel/', views.admin_panel, name='admin_panel' ),
+
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]
-print("SDGGSDg")
-teh = []
+
+

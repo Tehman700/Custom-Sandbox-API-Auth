@@ -4,4 +4,4 @@ from django.contrib import admin
 # Register your models here.
 
 
-admin.site.register(LoginInfo)
+admin.site.register(AdminMessage)

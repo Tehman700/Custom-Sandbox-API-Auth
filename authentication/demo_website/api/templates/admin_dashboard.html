@@ -1,0 +1,28 @@
+<!-- templates/admin_dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+
+    <h2>Admin Dashboard</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="message" rows="4" cols="50" placeholder="Enter message to publish..." required></textarea>
+        <br>
+        <button type="submit">Upload Message</button>
+    </form>
+
+    <h3>Previously Uploaded Messages:</h3>
+    <ul>
+        {% for msg in messages %}
+            <li>{{ msg.uploaded_at }} - {{ msg.message }}</li>
+        {% empty %}
+            <li>No messages yet.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
