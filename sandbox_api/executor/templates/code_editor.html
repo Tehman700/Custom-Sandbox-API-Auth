@@ -45,7 +45,7 @@
 <body>
 
 <div class="container">
-    <h2 class="mb-4 text-center">Tehman Custom Sandbox API</h2>
+    <h2 class="mb-4 text-center">🚀 Online Code Executor</h2>
 
     <div class="mb-3">
         <label for="language">Language</label>
@@ -66,7 +66,7 @@
         <button onclick="submitCode()" class="btn btn-primary w-100">Run Code</button>
     </div>
 
-    <h4>Output:</h4>
+    <h4>🔍 Output:</h4>
     <pre id="output">-- Your result will appear here --</pre>
 </div>
 
@@ -76,21 +76,21 @@
         const input = document.getElementById("input").value;
         const language = document.getElementById("language").value;
 
-        document.getElementById("output").textContent = "The Code is Running...";
+        document.getElementById("output").textContent = "⏳ Running code...";
 
-        fetch('http://127.0.0.1:8000/api/v1/execute/', {
+        fetch('/api/v1/execute/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({language, code, input})
+            body: JSON.stringify({ code, input, language })
         })
         .then(response => response.json())
         .then(data => {
             document.getElementById("output").textContent = JSON.stringify(data, null, 2);
         })
         .catch(error => {
-            document.getElementById("output").textContent = ' OOPS Error: ' + error;
+            document.getElementById("output").textContent = '❌ Error: ' + error;
         });
     }
 </script>

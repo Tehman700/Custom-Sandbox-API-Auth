@@ -18,21 +18,28 @@ from django.http import HttpResponse
 
 from django.contrib import messages
 # Create your views here.
+from .forms import *
 
 
 
 def registerView(request):
-
-
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = TehmanMethod(request.POST)
+        print("first")
 
         if form.is_valid():
+            print("valid")
             user = form.save()
+            print("second")
             login(request, user)
+            print("third")
             return redirect('dashboard')
+
+        else:
+            print("error")
     else:
-        form = UserCreationForm()
+        form = TehmanMethod()
+        print("fourth")
     return render(request, 'register.html', {'form': form})
 
 
@@ -56,8 +63,7 @@ def loginView(request):
 
 @login_required
 def dashboard(request):
-    messages = AdminMessage.objects.all().order_by('-uploaded_at')
-    return render(request, 'dashboard.html', {'messages': messages})
+    return render(request, 'dashboard.html')
 
 def logout_view(request):
     logout(request)

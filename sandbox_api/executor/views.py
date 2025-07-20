@@ -3,11 +3,20 @@ import uuid
 import subprocess
 import time
 import tempfile
-
+from django.http import JsonResponse
+from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import CodeExecutionSerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
+
+# This is your HTML view for student code editor
+
+
+# This is your REST API endpoint
+@method_decorator(csrf_exempt, name='dispatch')  # Optional if you handle CSRF via token
 class CodeExecutionView(APIView):
     def post(self, request):
         serializer = CodeExecutionSerializer(data=request.data)
@@ -17,15 +26,11 @@ class CodeExecutionView(APIView):
         input_data = serializer.validated_data.get('input', '')
         language = serializer.validated_data['language']
 
-        # Save code to a temp file
         uid = str(uuid.uuid4())
-        
-
-        temp_dir = tempfile.gettempdir()  # This works cross-platform
+        temp_dir = tempfile.gettempdir()
 
         code_filename = os.path.join(temp_dir, f"{uid}.py")
         input_filename = os.path.join(temp_dir, f"{uid}_input.txt")
-
 
         with open(code_filename, 'w') as f:
             f.write(code)
@@ -33,7 +38,6 @@ class CodeExecutionView(APIView):
         with open(input_filename, 'w') as f:
             f.write(input_data)
 
-        # Run Docker command
         docker_command = [
             "docker", "run", "--rm",
             "-v", f"{code_filename}:/app/code.py",
@@ -70,7 +74,6 @@ class CodeExecutionView(APIView):
             exec_time = 2.001
             verdict = "Time Limit Exceeded"
 
-        # Cleanup
         os.remove(code_filename)
         os.remove(input_filename)
 
