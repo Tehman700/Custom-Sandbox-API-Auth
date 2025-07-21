@@ -1,10 +1,14 @@
+import ast
+import json
 import os
+import re
 import uuid
 import subprocess
 import time
 import tempfile
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import CodeExecutionSerializer
@@ -16,15 +20,29 @@ from django.utils.decorators import method_decorator
 
 
 # This is your REST API endpoint
-@method_decorator(csrf_exempt, name='dispatch')  # Optional if you handle CSRF via token
 class CodeExecutionView(APIView):
     def post(self, request):
+
         serializer = CodeExecutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         code = serializer.validated_data['code']
         input_data = serializer.validated_data.get('input', '')
         language = serializer.validated_data['language']
+
+        # Extract the first line
+        first_line = code.strip().splitlines()[0]
+
+        # Use regex to extract what's inside the parentheses
+        match = re.search(r'\((.*?)\)', first_line)
+
+        if match:
+            inside_parentheses = match.group(1)
+            params = [p.strip() for p in inside_parentheses.split(',')]
+            print("Inside (): ", inside_parentheses)
+            print("Parameters list:", params)
+        else:
+            print("No function definition or parentheses found.")
 
         uid = str(uuid.uuid4())
         temp_dir = tempfile.gettempdir()
@@ -63,9 +81,17 @@ class CodeExecutionView(APIView):
             exit_code = result.returncode
             exec_time = round(end_time - start_time, 3)
 
-            verdict = "Accepted" if exit_code == 0 else "Runtime Error"
+
+            if exit_code == 0:
+                verdict = "Code Accepted"
+
+            else:
+                verdict = "Runtime Error"
+
+
             if exec_time > 2.0:
                 verdict = "Time Limit Exceeded"
+
 
         except subprocess.TimeoutExpired:
             stdout = ""
@@ -76,6 +102,10 @@ class CodeExecutionView(APIView):
 
         os.remove(code_filename)
         os.remove(input_filename)
+
+
+
+        print(stdout)
 
         return Response({
             "stdout": stdout,

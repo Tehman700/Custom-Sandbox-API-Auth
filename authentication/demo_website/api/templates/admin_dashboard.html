@@ -1,28 +1,156 @@
-<!-- templates/admin_dashboard.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Teacher Dashboard - Assignment Creator</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 30px;
+        }
+        .problem-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .add-btn {
+            margin-top: 10px;
+        }
+        .upload-btn {
+            display: block;
+            margin: 30px auto 0;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <h2>Admin Dashboard</h2>
+<div class="container">
+    <h2 class="text-center mb-4">📘 Teacher Dashboard - Create Assignment</h2>
 
-    <form method="POST">
-        {% csrf_token %}
-        <textarea name="message" rows="4" cols="50" placeholder="Enter message to publish..." required></textarea>
-        <br>
-        <button type="submit">Upload Message</button>
-    </form>
+    <!-- Assignment Number -->
+    <div class="mb-4">
+        <label for="assignmentNumber" class="form-label">Assignment Number</label>
+        <input type="text" class="form-control" id="assignmentNumber" placeholder="e.g. Assignment 1">
+    </div>
 
-    <h3>Previously Uploaded Messages:</h3>
-    <ul>
-        {% for msg in messages %}
-            <li>{{ msg.uploaded_at }} - {{ msg.message }}</li>
-        {% empty %}
-            <li>No messages yet.</li>
-        {% endfor %}
-    </ul>
+    <!-- Problems Container -->
+    <div id="problemsContainer">
+        <div class="problem-card">
+            <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="deleteProblem(this)">
+                <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <h5>📝 Problem 1</h5>
+            <div class="mb-3">
+                <label class="form-label">Problem Statement</label>
+                <textarea class="form-control" rows="3" placeholder="Write the problem like on LeetCode..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Expected input() in this problem</label>
+                <textarea class="form-control" rows="2" placeholder="Describe the input() to the problem"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Expected return in this problem</label>
+                <textarea class="form-control" rows="2" placeholder="Describe what should this problem return."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add More Problems Button -->
+    <div class="text-center">
+        <button class="btn btn-outline-primary add-btn" onclick="addProblem()">
+            <i class="fas fa-plus"></i> Add Another Problem
+        </button>
+    </div>
+
+    <!-- Upload Button -->
+    <button class="btn btn-success upload-btn" onclick="uploadAssignment()">
+        <i class="fas fa-upload"></i> Upload Assignment
+    </button>
+</div>
+
+<!-- Bootstrap JS & Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let problemCount = 1;
+
+    function addProblem() {
+        problemCount++;
+
+        const problemHTML = `
+        <div class="problem-card">
+            <button type="button" class="btn btn-danger btn-sm delete-btn" onclick="deleteProblem(this)">
+                <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <h5>📝 Problem ${problemCount}</h5>
+            <div class="mb-3">
+                <label class="form-label">Problem Statement</label>
+                <textarea class="form-control" rows="3" placeholder="Write the problem like on LeetCode..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Expected input() in this problem</label>
+                <textarea class="form-control" rows="2" placeholder="Describe input(), e.g. input: 2 4, input: string..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Expected return in this problem</label>
+                <textarea class="form-control" rows="2" placeholder="Describe what should this problem return."></textarea>
+            </div>
+        </div>
+        `;
+
+        document.getElementById('problemsContainer').insertAdjacentHTML('beforeend', problemHTML);
+    }
+
+    function deleteProblem(button) {
+        const card = button.closest('.problem-card');
+        card.remove();
+    }
+
+    function uploadAssignment() {
+        const assignmentNumber = document.getElementById('assignmentNumber').value.trim();
+        const problems = [];
+
+        const problemCards = document.querySelectorAll('.problem-card');
+        problemCards.forEach(card => {
+            const textareas = card.querySelectorAll('textarea');
+            const statement = textareas[0].value.trim();
+            const input = textareas[1].value.trim();
+            const expectedReturn = textareas[2].value.trim();
+
+            if (statement && input && expectedReturn) {
+                problems.push({
+                    statement,
+                    input,
+                    expectedReturn
+                });
+            }
+        });
+
+        if (!assignmentNumber || problems.length === 0) {
+            alert("❗ Please enter an assignment number and at least one complete problem.");
+            return;
+        }
+
+        console.log({
+            assignmentNumber,
+            problems
+        });
+
+        alert('✅ Assignment uploaded successfully! (Check console for structured data)');
+    }
+</script>
 
 </body>
 </html>

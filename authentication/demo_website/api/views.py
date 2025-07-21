@@ -103,11 +103,6 @@ def admin_dashboard(request):
     if not request.session.get('is_admin'):
         return redirect('admin_panel')
 
-    if request.method == 'POST':
-        text = request.POST.get('message')
-        if text:
-            AdminMessage.objects.create(message=text)
 
-    messages = AdminMessage.objects.all().order_by('-uploaded_at')
 
-    return render(request, 'admin_dashboard.html', {'messages': messages})
+    return render(request, 'admin_dashboard.html')

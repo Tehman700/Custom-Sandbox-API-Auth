@@ -10,7 +10,11 @@ class TehmanMethod(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])  # hashes the password
+        user.set_password(self.cleaned_data["password"])
+
+        # The above will hash the password for little security reasons
         if commit:
             user.save()
         return user
+
+
